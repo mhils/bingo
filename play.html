@@ -15,7 +15,7 @@
     }
     #game button {
       width: 18vw;
-      height: 18vw;
+      height: calc(min(18vw,18vh));
       padding: 1px;
     }
   </style>
@@ -24,7 +24,7 @@
   <h1 class="text-center my-4">Road Bingo</h1>
   <div id="game">
   </div>
-  <a class="btn btn-secondary btn-sm text-center w-100 my-4" href="./create.html">⮪</a>
+  <a class="btn btn-secondary btn-sm text-center w-100 my-4" href="./create.html">go back</a>
   <script src="textFit.js"></script>
   <script>
     const $ = document.querySelector.bind(document);
@@ -42,7 +42,7 @@
           ${x.text}
         </button>
       `).join("");
-      textFit(document.getElementsByClassName('field'));
+      textFit(document.getElementsByClassName('field'), {maxFontSize: 40});
     }
 
     render();
