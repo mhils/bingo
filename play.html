@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Road Bingo</title>
+  <link href="bootstrap.min.css" rel="stylesheet">
+  <style type="text/css">
+    #game {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
+      row-gap: 1vw;
+      column-gap: 1vw;
+    }
+    #game button {
+      width: 18vw;
+      height: 18vw;
+      padding: 1px;
+    }
+  </style>
+</head>
+<body class="p-2">
+  <h1 class="text-center my-4">Road Bingo</h1>
+  <div id="game">
+  </div>
+  <a class="btn btn-secondary btn-sm text-center w-100 my-4" href="./create.html">⮪</a>
+  <script src="textFit.js"></script>
+  <script>
+    const $ = document.querySelector.bind(document);
+    let state;
+    try {
+      state = JSON.parse(localStorage["gameState"]);
+    } catch(e) {
+      location.href = "./create.html";
+    }
+
+
+    function render() {
+      $("#game").innerHTML = state.map((x,i) => `
+        <button data-idx=${i} class="field btn ${x.checked ? 'btn-success' : 'btn-secondary'}">
+          ${x.text}
+        </button>
+      `).join("");
+      textFit(document.getElementsByClassName('field'));
+    }
+
+    render();
+
+    let hadBingo = false;
+    
+    $("#game").addEventListener("click", (e) => {
+      let t = e.target;
+      if(e.target.tagName == "SPAN") {
+        t = t.parentElement;
+      }
+      const i = parseInt(t.dataset["idx"]);
+      state[i].checked = !state[i].checked;
+
+      localStorage["gameState"] = JSON.stringify(state);
+      render();
+
+      if(!hadBingo) {
+        let done = [
+          [0,1,2,3,4],
+          [5,6,7,8,9],
+          [10,11,12,13,14],
+          [15,16,17,18,19],
+          [20,21,22,23,24],
+          [0,5,10,15,20],
+          [1,6,11,16,21],
+          [2,7,12,17,22],
+          [3,8,13,18,23],
+          [4,9,14,19,24],
+          [0,6,12,18,24],
+          [4,8,12,16,20],
+        ].some(m => m.every(i => state[i].checked));
+        if(done) {
+          hadBingo = true;
+          new Audio('bingo.mp3').play();
+        }
+      }
+    })
+
+    
+  </script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Road Bingo</title>
+  <link href="bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body class="p-2">
+  <h1>Road Bingo</h1>
+  <ul id="categories" class="list-group">
+  </ul>
+  <button id="create" class="btn btn-success btn-lg w-100 my-2">Create Game</button>
+  <a id="continue" class="btn btn-primary btn-lg w-100 my-2 d-none" href="./play.html">Continue Game</a>
+  <script>
+    const $ = document.querySelector.bind(document);
+    const categories = [
+      {
+        id: "license-plates",
+        label: "License Plates",
+        weight: 1,
+        items: [
+          {text: "Wisconsin License Plate"},
+          {text: "North Dakota License Plate"},
+          {text: "South Dakota License Plate"},
+          {text: "Florida License Plate"},
+          {text: "Illinois License Plate"},
+          {text: "Iowa License Plate"},
+          {text: "California License Plate"},
+        ],
+      },
+      {
+        id: "nature",
+        label: "Nature",
+        weight: 1,
+        items: [
+          {text: "Lake"},
+          {text: "River"},
+          {text: "Any 🐦"},
+          {text: "🦆"},
+          {text: "🐄"},
+          {text: "🐎"},
+          {text: "🐕"},
+          {text: "🐿️"},
+          {text: "Corn field"},
+        ],
+      },
+      {
+        id: "Shops",
+        label: "Shops",
+        weight: 1,
+        items: [
+          {text: "Starbucks"},
+          {text: "Mc Donalds"},
+          {text: "Caribou"},
+          {text: "Chipotle"},
+          {text: "Chick-fil-A"},
+          {text: "Dairy Queen"},
+          {text: "Taco Bell"},
+          {text: "Subway"},
+          {text: "Burger King"},
+          {text: "Target"},
+        ],
+      },
+      {
+        id: "roadsigns",
+        label: "Road Signs",
+        weight: 1,
+        items: [
+          {text: "Road Works"},
+          {text: "Stop Sign"},
+          {text: "Yield Sign"},
+          {text: "S-Curve Sign"},
+          {text: "Oneway Sign"},
+          {text: "No Turn on Red"},
+          {text: "No Parking"},
+          {text: "No Littering"},
+          {text: "No Trespassing"},
+          {text: "Electric Billboard"},
+          {text: "Paper Billboard"},
+          {text: "Caution Animal Sign"},
+          {text: "Adopt a Highway"},
+          {text: "Speed Limit 65"},
+          {text: "Speed Limit 60"},
+          {text: "Speed Limit 55"},
+          {text: "Speed Limit 40"},
+          {text: "Speed Limit 25"},
+          {text: "School Crossing Sign"},
+          {text: "Flashing Yellow Light"},
+        ],
+      },
+      {
+        id: "cars",
+        label: "Cars",
+        weight: 1,
+        items: [
+          {text: "Van"},
+          {text: "Mercedes"},
+          {text: "BMW"},
+          {text: "Toyota"},
+          {text: "Ford"},
+          {text: "Honda"},
+          {text: "Porsche"},
+          {text: "Tesla"},
+          {text: "Supercar"},
+          {text: "🟨🚗"},
+          {text: "🟥🚗"},
+          {text: "🟩🚗"},
+          {text: "Tank Truck"},
+          {text: "RV"},
+          {text: "🚜"},
+          {text: "🏍️"},
+          {text: "🚲"},
+          {text: "🚏"},
+          {text: "🚤"},
+        ]
+      },
+      {
+        id: "services",
+        label: "Services",
+        weight: 1,
+        items: [
+          {text: "🚓"},
+          {text: "Amazon Truck"},
+          {text: "UPS"},
+          {text: "🚒"},
+          {text: "🚑"},
+          {text: "✈️"}, 
+          {text: "🚃"},
+          {text: "🚌"},
+          {text: "Uber"},
+        ]
+      },
+      {
+        id: "structures",
+        label: "Structures",
+        weight: 1,
+        items: [
+          {text: "Silo"},
+          {text: "Water Tower"},
+          {text: "Windmill"},
+          {text: "Powerline"},
+          {text: "Barn"},
+          {text: "Storage Place"},
+          {text: "⛽"},
+          {text: "Sport Field"},
+        ]
+      },
+      {
+        id: "misc",
+        label: "Miscellaneous",
+        weight: 1,
+        items: [
+          {text: "Broken Car"},
+          {text: "3+ Passengers"},
+          {text: "🇺🇸"},
+          {text: "Non-American Flag"},
+        ]
+      }
+    ];
+    $("#categories").innerHTML = categories.map(cat => `
+      <li class="list-group-item">
+      <input checked class="form-check-input me-1" type="checkbox" value="" id="${cat.id}">
+      <label class="form-check-label" for="${cat.id}">${cat.label}</label>
+    </li>`).join("");
+
+    if ("gameState" in localStorage) {
+      $("#continue").classList.remove("d-none");
+    }
+
+    const sample = (array) => {
+      const random = Math.floor(Math.random() * array.length);
+      return array[random];
+    }
+
+    $("#create").addEventListener("click", () => {
+      const picked = new Set([]);
+      let pick = [];
+      let total = 0;
+
+      for (const cat of categories) {
+        if(!$(`#${cat.id}`).checked)
+          continue;
+
+        total += cat.items.length;
+        for(let i=0; i < cat.weight; i++)
+          pick.push(cat.items);
+      }
+
+      if (total < 25) {
+        alert("Not enough entries.");
+        return;
+      }
+
+      let items = [];
+      while(items.length < 24) {
+        let item = sample(sample(pick));
+        if(picked.has(item))
+          continue;
+        picked.add(item);
+        items.push({checked: false, ...item});
+      }
+
+      items.splice(12, 0, {checked: true, text: "⭐"});
+      
+      localStorage["gameState"] = JSON.stringify(items);
+      location.href = "./play.html";
+    });
+  </script>
+</body>
+</html>
