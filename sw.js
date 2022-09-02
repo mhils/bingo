@@ -9,8 +9,9 @@ const CACHE_URLS = [
 // The install handler takes care of precaching the resources we always need.
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
-  	const cache = await caches.open(CACHE_NAME);
-  	await cache.addAll(CACHE_URLS);
+    const cache = await caches.open(CACHE_NAME);
+    await cache.addAll(CACHE_URLS);
+    self.skipWaiting();
   })());
 });
 
@@ -18,7 +19,7 @@ self.addEventListener('fetch', e => {
   e.respondWith((async () => {
     const r = await caches.match(e.request);
     if (r) {
-    	return r;
+      return r;
     }
     const response = await fetch(e.request);
     // const cache = await caches.open(CACHE_NAME);
