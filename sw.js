@@ -1,4 +1,4 @@
-const CACHE_NAME = "bingo-v1";
+const CACHE_NAME = "bingo-v2";
 const CACHE_URLS = [
   "./",
   "./bootstrap.min.css",
